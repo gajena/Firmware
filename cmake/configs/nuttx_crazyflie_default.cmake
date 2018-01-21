@@ -1,4 +1,3 @@
-include(nuttx/px4_impl_nuttx)
 
 px4_nuttx_configure(HWCLASS m4 CONFIG nsh ROMFS y ROMFSROOT px4fmu_common)
 
@@ -12,7 +11,7 @@ set(config_module_list
 	drivers/px4fmu
 	drivers/boards
 	drivers/mpu9250
-	drivers/lps25h
+	drivers/barometer/lps25h
 	drivers/gps
 	modules/sensors
 

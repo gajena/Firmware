@@ -71,6 +71,7 @@ enum NAV_CMD {
 	NAV_CMD_DELAY = 93,
 	NAV_CMD_DO_JUMP = 177,
 	NAV_CMD_DO_CHANGE_SPEED = 178,
+	NAV_CMD_DO_SET_HOME = 179,
 	NAV_CMD_DO_SET_SERVO = 183,
 	NAV_CMD_DO_LAND_START = 189,
 	NAV_CMD_DO_SET_ROI = 201,
@@ -133,6 +134,7 @@ struct mission_item_s {
 	union {
 		uint16_t do_jump_current_count;		/**< count how many times the jump has been done	*/
 		uint16_t vertex_count;			/**< Polygon vertex count (geofence)	*/
+		uint16_t land_precision;		/**< Defines if landing should be precise: 0 = normal landing, 1 = opportunistic precision landing, 2 = required precision landing (with search)	*/
 	};
 	struct {
 		uint16_t frame : 4,					/**< mission frame */
