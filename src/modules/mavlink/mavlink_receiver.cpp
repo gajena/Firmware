@@ -1179,6 +1179,11 @@ MavlinkReceiver::handle_message_vision_position_estimate(mavlink_message_t *msg)
 	vision_position.y = pos.y;
 	vision_position.z = pos.z;
 
+	vision_position.xy_valid = true;
+	vision_position.z_valid = true;
+	vision_position.v_xy_valid = true;
+	vision_position.v_z_valid = true;
+
 	struct vehicle_attitude_s vision_attitude = {};
 
 	vision_attitude.timestamp = sync_stamp(pos.usec);
@@ -2206,6 +2211,8 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 		_hil_local_pos.yaw = euler.psi();
 		_hil_local_pos.xy_global = true;
 		_hil_local_pos.z_global = true;
+		_hil_local_pos.vxy_max = 0.0f;
+		_hil_local_pos.limit_hagl = false;
 
 		if (_local_pos_pub == nullptr) {
 			_local_pos_pub = orb_advertise(ORB_ID(vehicle_local_position), &_hil_local_pos);

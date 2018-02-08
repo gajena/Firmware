@@ -231,6 +231,7 @@ private:
 		param_t opt_recover;
 		param_t rc_flt_smp_rate;
 		param_t rc_flt_cutoff;
+		param_t acc_max_flow_xy;
 	}		_params_handles;		/**< handles for interesting parameters */
 
 	struct {
@@ -259,6 +260,7 @@ private:
 
 		float rc_flt_smp_rate;
 		float rc_flt_cutoff;
+		float acc_max_flow_xy;
 
 		math::Vector<3> pos_p;
 		math::Vector<3> vel_p;
@@ -290,6 +292,7 @@ private:
 	float _man_yaw_offset; /**< current yaw offset in manual mode */
 
 	float _vel_max_xy;  /**< equal to vel_max except in auto mode when close to target */
+	bool _vel_sp_significant; /** true when the velocity setpoint is over 50% of the _vel_max_xy limit */
 	float _acceleration_state_dependent_xy; /**< acceleration limit applied in manual mode */
 	float _acceleration_state_dependent_z; /**< acceleration limit applied in manual mode in z */
 	float _manual_jerk_limit_xy; /**< jerk limit in manual mode dependent on stick input */
@@ -297,6 +300,8 @@ private:
 	float _z_derivative; /**< velocity in z that agrees with position rate */
 
 	float _takeoff_vel_limit; /**< velocity limit value which gets ramped up */
+
+	float _min_hagl_limit; /**< minimum continuous height above ground (m) */
 
 	// counters for reset events on position and velocity states
 	// they are used to identify a reset event
@@ -468,12 +473,14 @@ MulticopterPositionControl::MulticopterPositionControl() :
 	_yaw_takeoff(0.0f),
 	_man_yaw_offset(0.0f),
 	_vel_max_xy(0.0f),
+	_vel_sp_significant(false),
 	_acceleration_state_dependent_xy(0.0f),
 	_acceleration_state_dependent_z(0.0f),
 	_manual_jerk_limit_xy(1.0f),
 	_manual_jerk_limit_z(1.0f),
 	_z_derivative(0.0f),
 	_takeoff_vel_limit(0.0f),
+	_min_hagl_limit(0.0f),
 	_z_reset_counter(0),
 	_xy_reset_counter(0),
 	_heading_reset_counter(0)
@@ -537,6 +544,7 @@ MulticopterPositionControl::MulticopterPositionControl() :
 	_params_handles.alt_mode = param_find("MPC_ALT_MODE");
 	_params_handles.rc_flt_cutoff = param_find("RC_FLT_CUTOFF");
 	_params_handles.rc_flt_smp_rate = param_find("RC_FLT_SMP_RATE");
+	_params_handles.acc_max_flow_xy = param_find("MPC_ACC_HOR_FLOW");
 
 	/* fetch initial parameter values */
 	parameters_update(true);
@@ -703,6 +711,16 @@ MulticopterPositionControl::parameters_update(bool force)
 		/* we only use jerk for braking if jerk_hor_max > jerk_hor_min; otherwise just set jerk very large */
 		_manual_jerk_limit_z = (_jerk_hor_max.get() > _jerk_hor_min.get()) ? _jerk_hor_max.get() : 1000000.f;
 
+		/* Get parameter values used to fly within optical flow sensor limits */
+		param_t handle = param_find("SENS_FLOW_MINRNG");
+
+		if (handle != PARAM_INVALID) {
+			param_get(handle, &_min_hagl_limit);
+		}
+
+		if (_params_handles.acc_max_flow_xy != PARAM_INVALID) {
+			param_get(handle, &_params.acc_max_flow_xy);
+		}
 
 	}
 
@@ -1357,6 +1375,7 @@ MulticopterPositionControl::control_manual()
 
 		/* reset position setpoint to current position if needed */
 		reset_pos_sp();
+
 	}
 
 	/* prepare yaw to rotate into NED frame */
@@ -2482,6 +2501,18 @@ MulticopterPositionControl::calculate_velocity_setpoint()
 		_vel_sp(2) = math::max(_vel_sp(2), -vel_limit);
 	}
 
+	// encourage pilot to respect flow sensor minimum height limitations
+	if (_local_pos.limit_hagl && _local_pos.dist_bottom_valid && _control_mode.flag_control_manual_enabled
+	    && _control_mode.flag_control_altitude_enabled) {
+		// If distance to ground is less than limit, increment set point upwards at up to the landing descent rate
+		if (_local_pos.dist_bottom < _min_hagl_limit) {
+			float climb_rate_bias = fminf(1.5f * _params.pos_p(2) * (_min_hagl_limit - _local_pos.dist_bottom), _params.land_speed);
+			_vel_sp(2) -= climb_rate_bias;
+			_pos_sp(2) -= climb_rate_bias * _dt;
+
+		}
+	}
+
 	/* limit vertical downwards speed (positive z) close to ground
 	 * for now we use the altitude above home and assume that we want to land at same height as we took off */
 	float vel_limit = math::gradual(altitude_above_home,
@@ -2506,6 +2537,9 @@ MulticopterPositionControl::calculate_velocity_setpoint()
 
 	/* make sure velocity setpoint is constrained in all directions (xyz) */
 	float vel_norm_xy = sqrtf(_vel_sp(0) * _vel_sp(0) + _vel_sp(1) * _vel_sp(1));
+
+	/* check if the velocity demand is significant */
+	_vel_sp_significant =  vel_norm_xy > 0.5f * _vel_max_xy;
 
 	if (vel_norm_xy > _vel_max_xy) {
 		_vel_sp(0) = _vel_sp(0) * _vel_max_xy / vel_norm_xy;
@@ -3048,8 +3082,23 @@ MulticopterPositionControl::task_main()
 		/* set dt for control blocks */
 		setDt(dt);
 
-		/* set default max velocity in xy to vel_max */
-		_vel_max_xy = _params.vel_max_xy;
+		/* set default max velocity in xy to vel_max
+		 * Apply estimator limits if applicable */
+		if (_local_pos.vxy_max > 0.001f) {
+			// use the minimum of the estimator and user specified limit
+			_vel_max_xy = fminf(_params.vel_max_xy, _local_pos.vxy_max);
+			// Allow for a minimum of 0.3 m/s for repositioning
+			_vel_max_xy = fmaxf(_vel_max_xy, 0.3f);
+
+		} else if (_vel_sp_significant) {
+			// raise the limit at a constant rate up to the user specified value
+			if (_vel_max_xy >= _params.vel_max_xy) {
+				_vel_max_xy = _params.vel_max_xy;
+
+			} else {
+				_vel_max_xy += dt * _params.acc_max_flow_xy;
+			}
+		}
 
 		/* reset flags when landed */
 		if (_vehicle_land_detected.landed) {
@@ -3078,6 +3127,9 @@ MulticopterPositionControl::task_main()
 			 * TODO: we need a defined setpoint to do this properly especially when adjusting the mixer */
 			_att_sp.thrust = 0.0f;
 			_att_sp.timestamp = hrt_absolute_time();
+
+			/* reset velocity limit */
+			_vel_max_xy = _params.vel_max_xy;
 		}
 
 		/* reset setpoints and integrators VTOL in FW mode */
