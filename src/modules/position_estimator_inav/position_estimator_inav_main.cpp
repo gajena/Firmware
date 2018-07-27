@@ -810,7 +810,7 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 
 						last_vision_x = vision.x;
 						last_vision_y = vision.y;
-						last_vision_z = vision.z;
+                        last_vision_z = vision.z;
 
 						/* calculate correction for velocity */
 						corr_vision[0][1] = vision.vx - x_est[1];

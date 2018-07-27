@@ -557,7 +557,56 @@ PX4FLOW::collect()
 	distance_report.timestamp = report.timestamp;
 	distance_report.min_distance = PX4FLOW_MIN_DISTANCE;
 	distance_report.max_distance = PX4FLOW_MAX_DISTANCE;
-	distance_report.current_distance = report.ground_distance_m;
+	distance_report.current_distance = report.ground_distance_m*10;
+	
+	
+// double sonar::getSonarFilteredData(double distance){
+	
+// 	VectorXf sonar_set_copy(30);
+// 	VectorXf sonar_set(30);
+
+// 	if (set_count==0){
+// 		sonar_set.setZero();
+// 	}
+// 	sonar_set_copy = sonar_set;
+// 	if (set_count < 30){
+// 		cout<<"init"<<endl;
+// 		//getting first 30 set of sonar data
+// 		sonar_set_copy[set_count] = distance;
+// 		sonar_set[set_count] = distance;
+// 		set_count++;
+// 		sonarVal = distance;
+// 		if(set_count==29){
+// 			first_val_check = 1;
+// 		}
+// 	}
+
+// 	else{
+// 		cout<<"running filter"<<endl<<"array"<<sonar_set_copy<<endl;
+// 		sort(sonar_set_copy.data(), sonar_set_copy.data()+sonar_set_copy.size()); //arranging the 300 set of data in increasing order
+// 		//cout << sonar_set_copy[200] << "\t \t" << Px4flowData->ground_distance<<endl;
+
+// 		// if((distance > (sonar_set_copy[20]-threshold))&&(distance < (sonar_set_copy[20]+threshold))){ //checking if the current value is in a limit of the median value
+// 			//if so then return the current sonar data
+// 			// sonarVal = distance;
+// 		for(int i=0;i<29;i++){
+// 			sonar_set[i] = sonar_set[i+1]; // updating the sonar set for next 300 data
+// 		}
+// 		sonar_set[29] = distance;
+		
+// 		cout<<"current out"<<distance<<endl<<"median out"<<sonar_set_copy[15]<<endl;
+// 		return sonar_set_copy[15];
+// 		// }
+
+// 		// else{
+// 		// 	return no_sonar_data;
+// 		// }
+
+// 	}
+// 	return no_sonar_data;
+
+// }
+
 	distance_report.covariance = 0.0f;
 	distance_report.type = distance_sensor_s::MAV_DISTANCE_SENSOR_ULTRASOUND;
 	/* TODO: the ID needs to be properly set */

@@ -1097,7 +1097,7 @@ MulticopterPositionControl::set_manual_acceleration_z(float &max_acceleration, c
 		_vel_sp_prev(2) = _vel(2);
 		_user_intention_z = brake;
 	}
-
+*
 	_user_intention_z = intention;
 
 	/*
@@ -3016,11 +3016,11 @@ void MulticopterPositionControl::follow_aruco_control(float dt){
 // //        _att_sp.roll_body = 10.0f;
 //        _att_sp.pitch_body = 0.0f;
 //        _att_sp.yaw_body = 0.0f;
- 		// _att_sp.pitch_body =- _manual.x * _params.man_tilt_max;
-		 //  _att_sp.roll_body = _manual.y * _params.man_tilt_max;
+ 		_att_sp.pitch_body =- _manual.x * _params.man_tilt_max;
+		  // _att_sp.roll_body = _manual.y * _params.man_tilt_max;
       		 // _att_sp.yaw_body = -z_ext; 
         _att_sp.roll_body = x_ext;
-       _att_sp.pitch_body = y_ext;
+    // _att_sp.pitch_body = y_ext;
       
 
         matrix::Quatf q_sp = matrix::Eulerf(_att_sp.roll_body, _att_sp.pitch_body, _att_sp.yaw_body);
