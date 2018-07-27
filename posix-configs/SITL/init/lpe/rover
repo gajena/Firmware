@@ -50,10 +50,9 @@ tone_alarm start
 gyrosim start
 accelsim start
 barosim start
-adcsim start
 gpssim start
 measairspeedsim start
-pwm_out_sim mode_pwm
+pwm_out_sim start
 sleep 1
 sensors start
 commander start
@@ -75,6 +74,6 @@ mavlink stream -r 50 -s SERVO_OUTPUT_RAW_0 -u 14556
 mavlink stream -r 20 -s RC_CHANNELS -u 14556
 mavlink stream -r 250 -s HIGHRES_IMU -u 14556
 mavlink stream -r 10 -s OPTICAL_FLOW_RAD -u 14556
-sdlog2 start -r 200 -e -t -a
+logger start -e -t
 mavlink boot_complete
 replay trystart

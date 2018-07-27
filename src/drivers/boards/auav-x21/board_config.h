@@ -115,14 +115,6 @@
 #define PX4_I2C_BUS_EXPANSION 1
 #define PX4_I2C_BUS_LED		PX4_I2C_BUS_EXPANSION
 
-/* Devices not on the onboard bus.
- *
- * Note that these are unshifted addresses.
- */
-#define PX4_I2C_OBDEV_LED	0x55
-#define PX4_I2C_OBDEV_HMC5883	0x1e
-#define PX4_I2C_OBDEV_LIS3MDL	0x1e
-
 /*
  * ADC channels
  *
@@ -254,6 +246,8 @@
 
 /* This board provides a DMA pool and APIs */
 #define BOARD_DMA_ALLOC_POOL_SIZE 5120
+
+#define BOARD_HAS_STATIC_MANIFEST 1
 
 __BEGIN_DECLS
 

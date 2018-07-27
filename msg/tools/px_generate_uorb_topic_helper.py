@@ -24,18 +24,18 @@ type_map = {
 }
 
 type_serialize_map = {
-    'int8': 'SignedChar',
-    'int16': 'Short',
-    'int32': 'Int',
-    'int64': 'Long',
-    'uint8': 'UnsignedChar',
-    'uint16': 'UnsignedShort',
-    'uint32': 'UnsignedInt',
-    'uint64': 'UnsignedLong',
-    'float32': 'Float',
-    'float64': 'Double',
-    'bool': 'Bool',
-    'char': 'Char',
+    'int8': 'char',
+    'int16': 'int16_t',
+    'int32': 'int32_t',
+    'int64': 'int64_t',
+    'uint8': 'uint8_t',
+    'uint16': 'uint16_t',
+    'uint32': 'uint32_t',
+    'uint64': 'uint64_t',
+    'float32': 'float',
+    'float64': 'double',
+    'bool': 'bool',
+    'char': 'char',
 }
 
 type_idl_map = {
@@ -68,6 +68,20 @@ msgtype_size_map = {
     'char': 1,
 }
 
+type_printf_map = {
+    'int8': '%d',
+    'int16': '%d',
+    'int32': '%" PRId32 "',
+    'int64': '%" PRId64 "',
+    'uint8': '%u',
+    'uint16': '%u',
+    'uint32': '%" PRIu32 "',
+    'uint64': '%" PRIu64 "',
+    'float32': '%.3f',
+    'float64': '%.3f',
+    'bool': '%u',
+    'char': '%c',
+}
 
 def bare_name(msg_type):
     """
@@ -163,6 +177,73 @@ def convert_type(spec_type):
     if is_array:
         return c_type + "[" + str(array_length) + "]"
     return c_type
+
+
+def print_field(field):
+    """
+    Echo printf line
+    """
+
+    # skip padding
+    if field.name.startswith('_padding'):
+        return
+
+    bare_type = field.type
+    if '/' in field.type:
+        # removing prefix
+        bare_type = (bare_type.split('/'))[1]
+
+    msg_type, is_array, array_length = genmsg.msgs.parse_type(bare_type)
+
+    field_name = ""
+
+    if is_array:
+        c_type = "["
+
+        if msg_type in type_map:
+            p_type = type_printf_map[msg_type]
+
+        else:
+            for i in range(array_length):
+                print("printf(\"\\t" + field.type + " " + field.name + "[" + str(i) + "]\");")
+                print(" print_message(message." + field.name + "[" + str(i) + "]);")
+            return
+
+        for i in range(array_length):
+
+            if i > 0:
+                c_type += ", "
+                field_name += ", "
+
+            if "float32" in field.type:
+                field_name += "(double)message." + field.name + "[" + str(i) + "]"
+            else:
+                field_name += "message." + field.name + "[" + str(i) + "]"
+
+            c_type += str(p_type)
+
+        c_type += "]"
+
+    else:
+        c_type = msg_type
+        if msg_type in type_map:
+            c_type = type_printf_map[msg_type]
+
+            field_name = "message." + field.name
+
+            # cast double
+            if field.type == "float32":
+                field_name = "(double)" + field_name
+            elif field.type == "bool":
+                c_type = '%s'
+                field_name = "(" + field_name + " ? \"True\" : \"False\")"
+
+        else:
+            print("printf(\"\\n\\t" + field.name + "\");")
+            print("\tprint_message(message."+ field.name + ");")
+            return
+
+    print("printf(\"\\t" + field.name + ": " + c_type + "\\n\", " + field_name + ");" )
 
 
 def print_field_def(field):

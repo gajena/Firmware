@@ -11,30 +11,22 @@ set(config_module_list
 	drivers/differential_pressure
 	drivers/distance_sensor
 	drivers/magnetometer
+	drivers/telemetry
 
-	drivers/airspeed
+	drivers/barometer/mpl3115a2
+	drivers/batt_smbus
 	drivers/blinkm
-#NOT Supported	drivers/bma180
-#NOT Supported	drivers/bmi160
-	drivers/boards
-	drivers/bst
 	drivers/camera_trigger
-	drivers/device
-	drivers/frsky_telemetry
-	drivers/fxos8701cq
-	drivers/fxas21002c
+	drivers/imu/fxas21002c
+	drivers/imu/fxos8701cq
 	drivers/gps
-	drivers/hott
-	drivers/iridiumsbd
 	drivers/kinetis
 	drivers/kinetis/adc
 	drivers/kinetis/tone_alarm
-	drivers/l3gd20
-	drivers/led
+	drivers/imu/l3gd20
 	drivers/mkblctrl
-	drivers/barometer/mpl3115a2
-	drivers/mpu6000
-	drivers/mpu9250
+	drivers/imu/mpu6000
+	drivers/imu/mpu9250
 	drivers/oreoled
 # NOT Portable YET drivers/pwm_input
 	drivers/pwm_out_sim
@@ -79,7 +71,6 @@ set(config_module_list
 	modules/commander/commander_tests
 	lib/controllib/controllib_test
 	modules/mavlink/mavlink_tests
-	modules/mc_pos_control/mc_pos_control_tests
 	modules/uORB/uORB_tests
 	systemcmds/tests
 
@@ -102,6 +93,7 @@ set(config_module_list
 	modules/attitude_estimator_q
 	modules/ekf2
 	modules/local_position_estimator
+	modules/landing_target_estimator
 	modules/position_estimator_inav
 
 	#
@@ -119,32 +111,11 @@ set(config_module_list
 	# Logging
 	#
 	modules/logger
-	modules/sdlog2
 
 	#
 	# Library modules
 	#
-	modules/systemlib/param
-	modules/systemlib
-	modules/uORB
 	modules/dataman
-
-	#
-	# Libraries
-	#
-	lib/controllib
-	lib/ecl
-	lib/geo
-	lib/geo_lookup
-	lib/conversion
-	lib/led
-	lib/mathlib
-	lib/mixer
-	lib/rc
-	lib/terrain_estimation
-	lib/tunes
-	lib/version
-	lib/DriverFramework/framework
 
 	#
 	# OBC challenge

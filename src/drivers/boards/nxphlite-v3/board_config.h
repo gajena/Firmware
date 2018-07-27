@@ -132,8 +132,6 @@ __BEGIN_DECLS
 
 #define RC_UXART_BASE           KINETIS_UART1_BASE
 #define RC_SERIAL_PORT          "/dev/ttyS2"      /* UART1 */
-#define INVERT_RC_INPUT(_s)     board_rc_input(_s);
-
 #define GPIO_RSSI_IN            PIN_ADC1_SE13
 
 /* Ethernet Control
@@ -264,10 +262,6 @@ __BEGIN_DECLS
 #define PX4_I2C_BUS_ONBOARD                 PX4_BUS_NUMBER_TO_PX4(1)
 
 #define PX4_I2C_BUS_LED                     PX4_I2C_BUS_EXPANSION
-
-#define PX4_I2C_OBDEV_LED                   0x55
-#define PX4_I2C_OBDEV_HMC5883               0x1e
-#define PX4_I2C_OBDEV_LIS3MDL               0x1e
 
 /*
  * ADC channels

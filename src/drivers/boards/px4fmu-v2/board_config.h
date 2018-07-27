@@ -56,6 +56,7 @@
 #define HW_VER_FMUV2_STATE     0x8 /* PB12:PU:1 PB12:PD:0 PB4:PU:0 PB4PD:0 */
 #define HW_VER_FMUV3_STATE     0xE /* PB12:PU:1 PB12:PD:1 PB4:PU:1 PB4PD:0 */
 #define HW_VER_FMUV2MINI_STATE 0xA /* PB12:PU:1 PB12:PD:0 PB4:PU:1 PB4PD:0 */
+#define HW_VER_FMUV2X_STATE    0xB /* PB12:PU:1 PB12:PD:0 PB4:PU:1 PB4PD:1 */
 #define HW_VER_TYPE_INIT {'V','2',0, 0}
 
 /****************************************************************************************************
@@ -221,14 +222,6 @@
 #define PX4_I2C_BUS_EXPANSION	1
 #define PX4_I2C_BUS_ONBOARD	2
 #define PX4_I2C_BUS_LED		PX4_I2C_BUS_ONBOARD
-
-/* Devices on the onboard bus.
- *
- * Note that these are unshifted addresses.
- */
-#define PX4_I2C_OBDEV_LED	0x55
-#define PX4_I2C_OBDEV_HMC5883	0x1e
-#define PX4_I2C_OBDEV_LIS3MDL	0x1e
 
 /*----------------------------------------------------------*/
 /*           FMUv3 Cube SPI chip selects and DRDY           */

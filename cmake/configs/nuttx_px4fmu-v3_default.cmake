@@ -17,25 +17,20 @@ set(config_module_list
 	drivers/differential_pressure
 	drivers/distance_sensor
 	drivers/magnetometer
+	drivers/telemetry
 
-	drivers/adis16448
-	drivers/airspeed
+	drivers/batt_smbus
 	drivers/blinkm
-	drivers/bmi160
-	drivers/boards
-	drivers/bst
 	drivers/camera_trigger
-	drivers/device
-	drivers/frsky_telemetry
 	drivers/gps
-	drivers/hott
-	drivers/iridiumsbd
+	drivers/imu/adis16448
+	drivers/imu/bmi160
+	drivers/imu/l3gd20
+	drivers/imu/lsm303d
+	drivers/imu/mpu6000
+	drivers/imu/mpu9250
 	drivers/irlock
-	drivers/l3gd20
-	drivers/led
 	drivers/mkblctrl
-	drivers/mpu6000
-	drivers/mpu9250
 	drivers/oreoled
 	drivers/protocol_splitter
 	drivers/pwm_input
@@ -84,7 +79,6 @@ set(config_module_list
 	#lib/rc/rc_tests
 	modules/commander/commander_tests
 	modules/mavlink/mavlink_tests
-	modules/mc_pos_control/mc_pos_control_tests
 	modules/uORB/uORB_tests
 	systemcmds/tests
 
@@ -109,6 +103,7 @@ set(config_module_list
 	modules/landing_target_estimator
 	modules/local_position_estimator
 	modules/position_estimator_inav
+	modules/wind_estimator
 
 	#
 	# Vehicle Control
@@ -125,31 +120,11 @@ set(config_module_list
 	# Logging
 	#
 	modules/logger
-	modules/sdlog2
 
 	#
 	# Library modules
 	#
 	modules/dataman
-	modules/systemlib
-	modules/systemlib/param
-	modules/uORB
-
-	#
-	# Libraries
-	#
-	lib/controllib
-	lib/conversion
-	lib/DriverFramework/framework
-	lib/ecl
-	lib/geo
-	lib/geo_lookup
-	lib/led
-	lib/mathlib
-	lib/mixer
-	lib/terrain_estimation
-	lib/tunes
-	lib/version
 
 	#
 	# OBC challenge

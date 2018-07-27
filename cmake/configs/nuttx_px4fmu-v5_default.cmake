@@ -11,25 +11,19 @@ set(config_module_list
 	drivers/differential_pressure
 	drivers/distance_sensor
 	drivers/magnetometer
+	drivers/telemetry
 
-	drivers/airspeed
+	drivers/batt_smbus
 	drivers/blinkm
-	drivers/bma180
-	drivers/bmi055
-	drivers/bmi160
-	drivers/boards
-	drivers/bst
+	drivers/imu/bma180
+	drivers/imu/bmi055
+	drivers/imu/bmi160
 	drivers/camera_trigger
-	drivers/device
-	drivers/frsky_telemetry
 	drivers/gps
-	drivers/hott
-	drivers/iridiumsbd
 	drivers/irlock
-	drivers/led
 	drivers/mkblctrl
-	drivers/mpu6000
-	drivers/mpu9250
+	drivers/imu/mpu6000
+	drivers/imu/mpu9250
 	drivers/oreoled
 	drivers/pwm_input
 	drivers/pwm_out_sim
@@ -37,7 +31,8 @@ set(config_module_list
 	drivers/px4fmu
 	drivers/px4io
 	drivers/rgbled
-	drivers/rgbled_pwm
+	# Enable the line below to put the three leds into PWM RGB mode
+	#drivers/rgbled_pwm
 	drivers/stm32
 	drivers/stm32/adc
 	drivers/stm32/tone_alarm
@@ -77,7 +72,6 @@ set(config_module_list
 	modules/commander/commander_tests
 	lib/controllib/controllib_test
 	modules/mavlink/mavlink_tests
-	modules/mc_pos_control/mc_pos_control_tests
 	modules/uORB/uORB_tests
 	systemcmds/tests
 
@@ -102,6 +96,7 @@ set(config_module_list
 	modules/landing_target_estimator
 	modules/local_position_estimator
 	modules/position_estimator_inav
+	modules/wind_estimator
 
 	#
 	# Vehicle Control
@@ -118,32 +113,11 @@ set(config_module_list
 	# Logging
 	#
 	modules/logger
-	modules/sdlog2
 
 	#
 	# Library modules
 	#
 	modules/dataman
-	modules/systemlib/param
-	modules/systemlib
-	modules/uORB
-
-	#
-	# Libraries
-	#
-	lib/controllib
-	lib/conversion
-	lib/DriverFramework/framework
-	lib/ecl
-	lib/geo
-	lib/geo_lookup
-	lib/led
-	lib/mathlib
-	lib/mixer
-	lib/rc
-	lib/terrain_estimation
-	lib/tunes
-	lib/version
 
 	#
 	# OBC challenge

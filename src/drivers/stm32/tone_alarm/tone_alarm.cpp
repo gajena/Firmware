@@ -109,7 +109,7 @@
 #include <drivers/drv_hrt.h>
 
 #include <systemlib/err.h>
-#include <systemlib/circuit_breaker.h>
+#include <circuit_breaker/circuit_breaker.h>
 
 #include <px4_workqueue.h>
 
@@ -367,7 +367,7 @@ ToneAlarm::ToneAlarm() :
 	_play_tone(false),
 	_tunes(),
 	_silence_length(0),
-	_cbrk(CBRK_OFF),
+	_cbrk(CBRK_UNINIT),
 	_tune_control_sub(-1)
 {
 	// enable debug() calls
