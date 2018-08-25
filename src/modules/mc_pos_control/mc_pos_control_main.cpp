@@ -749,7 +749,7 @@ MulticopterPositionControl::poll_subscriptions()
 		orb_copy(ORB_ID(att_pos_mocap), _mocap_sub, &_mocap);
 		x_ext = _mocap.x;
 		y_ext = _mocap.y;
-		z_ext = (int)_mocap.z;
+		z_ext = _mocap.z;
 	}
 
 	orb_check(_vehicle_land_detected_sub, &updated);
