@@ -101,20 +101,6 @@ PARAM_DEFINE_FLOAT(MPC_THR_MAX, 1.0f);
 PARAM_DEFINE_FLOAT(MPC_MANTHR_MIN, 0.08f);
 
 /**
- * Maximum manual thrust
- *
- * Limit max allowed thrust for Manual mode.
- *
- * @unit norm
- * @min 0.0
- * @max 1.0
- * @decimal 2
- * @increment 0.01
- * @group Multicopter Position Control
- */
-PARAM_DEFINE_FLOAT(MPC_MANTHR_MAX, 1.0f);
-
-/**
  * Proportional gain for vertical position error
  *
  * @min 0.0
@@ -657,3 +643,18 @@ PARAM_DEFINE_FLOAT(MPC_IDLE_TKO, 0.0f);
  * @group Multicopter Position Control
  */
 PARAM_DEFINE_INT32(MPC_OBS_AVOID, 0);
+
+/**
+ * Yaw mode.
+ *
+ * Specifies the heading in Auto.
+ *
+ * @min 0
+ * @max 2
+ * @value 0 towards waypoint
+ * @value 1 towards home
+ * @value 2 away from home
+ * @value 3 along trajectory
+ * @group Mission
+ */
+PARAM_DEFINE_INT32(MPC_YAW_MODE, 0);
